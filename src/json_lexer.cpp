@@ -1,5 +1,7 @@
 #include "json_lexer.h"
 #include <cctype>
+#include <sstream>
+#include <iomanip>
 
 namespace json {
 
@@ -28,6 +30,7 @@ Token JsonLexer::nextToken() {
         case 'n': return scanIdentifier();
         default:
             if (std::isdigit(c) || c == '-') {
+                current_--; // 回退一个字符，让scanNumber处理第一个字符
                 return scanNumber();
             }
             return makeError("Unexpected character");
@@ -104,8 +107,32 @@ Token JsonLexer::scanString() {
                         }
                         hex += peek();
                     }
-                    // TODO: 实现Unicode字符转换
-                    value += "\\u" + hex;
+                    
+                    // 将十六进制字符串转换为Unicode字符
+                    try {
+                        unsigned int codePoint = std::stoi(hex, nullptr, 16);
+                        if (codePoint <= 0x7F) {
+                            // ASCII字符
+                            value += static_cast<char>(codePoint);
+                        } else if (codePoint <= 0x7FF) {
+                            // 2字节UTF-8
+                            value += static_cast<char>(0xC0 | (codePoint >> 6));
+                            value += static_cast<char>(0x80 | (codePoint & 0x3F));
+                        } else if (codePoint <= 0xFFFF) {
+                            // 3字节UTF-8
+                            value += static_cast<char>(0xE0 | (codePoint >> 12));
+                            value += static_cast<char>(0x80 | ((codePoint >> 6) & 0x3F));
+                            value += static_cast<char>(0x80 | (codePoint & 0x3F));
+                        } else {
+                            // 4字节UTF-8
+                            value += static_cast<char>(0xF0 | (codePoint >> 18));
+                            value += static_cast<char>(0x80 | ((codePoint >> 12) & 0x3F));
+                            value += static_cast<char>(0x80 | ((codePoint >> 6) & 0x3F));
+                            value += static_cast<char>(0x80 | (codePoint & 0x3F));
+                        }
+                    } catch (const std::exception&) {
+                        return makeError("Invalid Unicode escape sequence");
+                    }
                     break;
                 }
                 default:
@@ -133,6 +160,10 @@ Token JsonLexer::scanNumber() {
     }
     
     // 处理整数部分
+    if (!std::isdigit(peek())) {
+        return makeError("Expected digit");
+    }
+    
     while (!isAtEnd() && std::isdigit(peek())) {
         value += advance();
     }

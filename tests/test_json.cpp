@@ -1,6 +1,12 @@
 #include "json_parser.h"
 #include <iostream>
 #include <cassert>
+#include <cmath>
+
+// 浮点数比较的辅助函数
+bool isClose(double a, double b, double epsilon = 1e-6) {
+    return std::abs(a - b) < epsilon;
+}
 
 void testBasicTypes() {
     // 测试字符串
@@ -16,7 +22,7 @@ void testBasicTypes() {
         json::JsonParser parser("123.456");
         auto value = parser.parse();
         assert(value.isNumber());
-        assert(value.asNumber() == 123.456);
+        assert(isClose(value.asNumber(), 123.456));
     }
     
     // 测试布尔值
@@ -51,9 +57,9 @@ void testArrays() {
         assert(value.isArray());
         const auto& array = value.asArray();
         assert(array.size() == 3);
-        assert(array[0].asNumber() == 1);
-        assert(array[1].asNumber() == 2);
-        assert(array[2].asNumber() == 3);
+        assert(isClose(array[0].asNumber(), 1.0));
+        assert(isClose(array[1].asNumber(), 2.0));
+        assert(isClose(array[2].asNumber(), 3.0));
     }
     
     // 测试混合类型数组
@@ -63,7 +69,7 @@ void testArrays() {
         assert(value.isArray());
         const auto& array = value.asArray();
         assert(array.size() == 4);
-        assert(array[0].asNumber() == 1);
+        assert(isClose(array[0].asNumber(), 1.0));
         assert(array[1].asString() == "two");
         assert(array[2].asBoolean() == true);
         assert(array[3].isNull());
@@ -87,7 +93,7 @@ void testObjects() {
         const auto& object = value.asObject();
         assert(object.size() == 2);
         assert(object.at("name").asString() == "John");
-        assert(object.at("age").asNumber() == 30);
+        assert(isClose(object.at("age").asNumber(), 30.0));
     }
     
     // 测试嵌套对象
@@ -100,7 +106,7 @@ void testObjects() {
         const auto& person = object.at("person");
         assert(person.isObject());
         assert(person.asObject().at("name").asString() == "John");
-        assert(person.asObject().at("age").asNumber() == 30);
+        assert(isClose(person.asObject().at("age").asNumber(), 30.0));
     }
 }
 
@@ -145,14 +151,14 @@ void testComplexExample() {
     const auto& object = value.asObject();
     
     assert(object.at("name").asString() == "John Doe");
-    assert(object.at("age").asNumber() == 30);
+    assert(isClose(object.at("age").asNumber(), 30.0));
     assert(object.at("isActive").asBoolean() == true);
     
     const auto& scores = object.at("scores").asArray();
     assert(scores.size() == 3);
-    assert(scores[0].asNumber() == 95);
-    assert(scores[1].asNumber() == 87);
-    assert(scores[2].asNumber() == 92);
+    assert(isClose(scores[0].asNumber(), 95.0));
+    assert(isClose(scores[1].asNumber(), 87.0));
+    assert(isClose(scores[2].asNumber(), 92.0));
     
     const auto& address = object.at("address").asObject();
     assert(address.at("street").asString() == "123 Main St");

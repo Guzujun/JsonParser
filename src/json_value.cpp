@@ -18,7 +18,7 @@ std::string JsonValue::toString() const {
         ss << std::fixed << std::setprecision(6) << asNumber();
         std::string str = ss.str();
         
-        // 移除末尾的0
+        // Remove trailing zeros
         str.erase(str.find_last_not_of('0') + 1, std::string::npos);
         if (str.back() == '.') {
             str.pop_back();
@@ -43,7 +43,7 @@ std::string JsonValue::toString() const {
                 case '\t': ss << "\\t"; break;
                 default:
                     if (c < 32 || c > 126) {
-                        // 处理非ASCII字符
+                        // Handle non-ASCII characters
                         ss << "\\u" << std::hex << std::setw(4) << std::setfill('0') << static_cast<int>(c);
                     } else {
                         ss << c;
@@ -89,7 +89,7 @@ std::string JsonValue::toString() const {
         return ss.str();
     }
     
-    return "null"; // 不应该到达这里
+    return "null"; // Should not reach here
 }
 
 } // namespace json 

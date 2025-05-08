@@ -6,19 +6,19 @@
 
 namespace json {
 
-// 解析器异常
+// Parser exception
 class ParserError : public std::runtime_error {
 public:
     explicit ParserError(const std::string& message) 
         : std::runtime_error(message) {}
 };
 
-// JSON解析器
+// JSON parser
 class JsonParser {
 public:
     explicit JsonParser(const std::string& input);
     
-    // 解析JSON字符串
+    // Parse JSON string
     JsonValue parse();
 
 private:
@@ -26,13 +26,13 @@ private:
     Token current_;
     Token previous_;
     
-    // 辅助函数
+    // Helper functions
     void advance();
     bool check(TokenType type) const;
     bool match(TokenType type);
     Token consume(TokenType type, const std::string& message);
     
-    // 解析各种JSON值
+    // Value parsers
     JsonValue parseValue();
     JsonValue parseObject();
     JsonValue parseArray();

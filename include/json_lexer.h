@@ -6,9 +6,9 @@
 
 namespace json {
 
-// Token类型
+// Token types
 enum class TokenType {
-    // 结构标记
+    // Structural tokens
     LEFT_BRACE,    // {
     RIGHT_BRACE,   // }
     LEFT_BRACKET,  // [
@@ -16,19 +16,19 @@ enum class TokenType {
     COMMA,         // ,
     COLON,         // :
     
-    // 字面量
+    // Literals
     STRING,        // "string"
     NUMBER,        // 123.456
     TRUE,          // true
     FALSE,         // false
     NULL_,         // null
     
-    // 特殊标记
-    END_OF_FILE,   // 文件结束
-    ERROR          // 错误
+    // Special tokens
+    END_OF_FILE,   // End of file
+    ERROR          // Error
 };
 
-// Token结构
+// Token structure
 struct Token {
     TokenType type;
     std::string value;
@@ -36,22 +36,22 @@ struct Token {
     size_t column;
 };
 
-// 词法分析器异常
+// Lexer exception
 class LexerError : public std::runtime_error {
 public:
     explicit LexerError(const std::string& message) 
         : std::runtime_error(message) {}
 };
 
-// 词法分析器
+// Lexer
 class JsonLexer {
 public:
     explicit JsonLexer(const std::string& input);
     
-    // 获取下一个token
+    // Get next token
     Token nextToken();
     
-    // 获取当前位置
+    // Get current position
     size_t getLine() const { return line_; }
     size_t getColumn() const { return column_; }
 
@@ -61,7 +61,7 @@ private:
     size_t line_;
     size_t column_;
     
-    // 辅助函数
+    // Helper functions
     char advance();
     char peek() const;
     bool isAtEnd() const;
@@ -69,7 +69,7 @@ private:
     Token makeToken(TokenType type, const std::string& value = "");
     Token makeError(const std::string& message);
     
-    // 处理各种token
+    // Token handlers
     Token scanString();
     Token scanNumber();
     Token scanIdentifier();

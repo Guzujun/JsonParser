@@ -17,6 +17,7 @@ set(SOURCES
 # 创建库
 add_library(jsonparser ${SOURCES})
 
-# 添加测试
+# 添加测试和示例
 enable_testing()
-add_subdirectory(tests) 
+add_subdirectory(tests)
+add_subdirectory(examples) 

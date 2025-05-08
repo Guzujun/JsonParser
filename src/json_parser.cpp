@@ -37,7 +37,9 @@ bool JsonParser::match(TokenType type) {
 
 Token JsonParser::consume(TokenType type, const std::string& message) {
     if (check(type)) {
-        return advance();
+        Token token = current_;
+        advance();
+        return token;
     }
     
     std::stringstream ss;
@@ -72,17 +74,17 @@ JsonValue JsonParser::parseValue() {
 JsonValue JsonParser::parseObject() {
     JsonValue::Object object;
     
-    advance(); // 消费左大括号
+    advance(); // Consume left brace
     
     if (!check(TokenType::RIGHT_BRACE)) {
         do {
-            // 解析键
+            // Parse key
             Token key = consume(TokenType::STRING, "Expected string key");
             
-            // 解析冒号
+            // Parse colon
             consume(TokenType::COLON, "Expected ':' after key");
             
-            // 解析值
+            // Parse value
             object[key.value] = parseValue();
         } while (match(TokenType::COMMA));
     }
@@ -94,7 +96,7 @@ JsonValue JsonParser::parseObject() {
 JsonValue JsonParser::parseArray() {
     JsonValue::Array array;
     
-    advance(); // 消费左方括号
+    advance(); // Consume left bracket
     
     if (!check(TokenType::RIGHT_BRACKET)) {
         do {
