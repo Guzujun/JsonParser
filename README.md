@@ -17,10 +17,6 @@ A JSON parser implemented in C++ that supports the complete JSON specification, 
 ## Build Steps
 
 1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/JsonParser.git
-cd JsonParser
-```
 
 2. Create and enter build directory:
 ```bash
